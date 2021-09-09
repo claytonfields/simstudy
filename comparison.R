@@ -1,9 +1,7 @@
 library(tidyverse)
-library(changepoint.np)
-library(cpm)
-library(strucchange)
+library(segmented)
 library(dpseg)
-
+library(aspline)
 
 #*[-----------------------------------------------------------------------------------------------]*#
 #*[ Objective: This program applies the GA method to detect structural changes in a simple        ]*#
@@ -14,8 +12,8 @@ library(dpseg)
 
 
 ### Setup library, data, and output directories
-WD.lib = c('Fields/')
-WD.inp = c('data/')
+WD.lib = c('')
+WD.inp = c('')
 ### Load the proposed GA and fitted model likelihood funtion packages
 source(file=paste(WD.lib,"ga_cont_01.R",sep=""))
 source(file=paste(WD.lib,"mle_lin_01.R",sep=""))
@@ -27,35 +25,39 @@ source(file=paste(WD.lib,"mle_lin_01.R",sep=""))
 ### 
 #*[-----------------------------------------------------------------------------------------------]*#
 
-### Linear, 2 changepoints
+#### Dataset 4
+### Linear, 3 changepoints
 ##  Generate X
-m_true = 2
-xi_1 = 26
-xi_2 = 70
-
-xi = c(2,xi_1, xi_2)
-
 n = 1000
 sigma = 3
+m_true = 3
+
+xi_1 = 21
+xi_2 = 70
+xi_3 = 85
+xi = c(3,xi_1, xi_2, xi_3)
 
 X = seq(from=0, to=100, length.out = n)
 X1 = X[X < xi_1]
-X2 = X[X >= xi_1 & X < xi_2]
-X3 = X[X >= xi_2]
+X2 = X[X>= xi_1 & X < xi_2]
+X3 = X[X >= xi_2 & X < xi_3]
+X4 = X[X >= xi_3]
 
-y1 = -.6*X1 + 67.4
-y2 = 2*X2
-y3 = -.4*X3+168
+y1 = 2*X1
+y2 = 69 - 1.3*X2
+y3 = rep(-22, length(X3))
+y4 = X4 - 107
 
 
-y_true = c(y1,y2,y3)
-eps = rnorm(n,0,3)
+y_true = c(y1,y2,y3,y4)
 
+
+eps = rnorm(n,0,sigma)
 y = y_true + eps
 
 
 df0 = tibble(X,y,y_true)
-ggplot(df0) + geom_point(aes(X,y), color='gray') + 
+ggplot(df0) + geom_point(aes(X,y), color='gray') +
   geom_line(aes(X,y_true), color='red')
 
 
@@ -104,8 +106,8 @@ epsilon = .0001
 
 
 
-start_pos = 101
-end_pos = 103
+start_pos = 1
+end_pos = 250
 for(i in start_pos:end_pos){
   begin = proc.time()  
   seed_i = 1000*(i-1)+543

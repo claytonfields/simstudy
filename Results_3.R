@@ -7,13 +7,15 @@ library(dpseg)
 #### Dataset 4
 ### Linear, 3 changepoints
 ##  Generate X
+n = 1000
+sigma = 3
+m_true = 3
+
 xi_1 = 21
 xi_2 = 70
 xi_3 = 85
-
 xi = c(3,xi_1, xi_2, xi_3)
 
-n = 1000
 X = seq(from=0, to=100, length.out = n)
 X1 = X[X < xi_1]
 X2 = X[X>= xi_1 & X < xi_2]
@@ -29,7 +31,7 @@ y4 = X4 - 107
 y_true = c(y1,y2,y3,y4)
 
 
-eps = rnorm(n,0,3)
+eps = rnorm(n,0,sigma)
 y = y_true + eps
 
 

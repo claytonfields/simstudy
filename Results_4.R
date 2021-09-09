@@ -6,6 +6,7 @@ library(segmented)
 
 n = 1000
 sigma = 3
+m_true = 4
 
 xi_1 = 8
 xi_2 = 21
