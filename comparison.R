@@ -106,8 +106,8 @@ epsilon = .0001
 
 
 
-start_pos = 1
-end_pos = 250
+start_pos = 501
+end_pos = 1000
 for(i in start_pos:end_pos){
   begin = proc.time()  
   seed_i = 1000*(i-1)+543
