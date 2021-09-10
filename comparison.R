@@ -25,41 +25,30 @@ source(file=paste(WD.lib,"mle_lin_01.R",sep=""))
 ### 
 #*[-----------------------------------------------------------------------------------------------]*#
 
-#### Dataset 4
-### Linear, 3 changepoints
+#### Dataset 2
+### Linear, 1 changepoints
 ##  Generate X
+xi_1 = 32
+xi = c(1,xi_1)
+m_true = 1
+
 n = 1000
 sigma = 3
-m_true = 3
-
-xi_1 = 21
-xi_2 = 70
-xi_3 = 85
-xi = c(3,xi_1, xi_2, xi_3)
-
 X = seq(from=0, to=100, length.out = n)
 X1 = X[X < xi_1]
-X2 = X[X>= xi_1 & X < xi_2]
-X3 = X[X >= xi_2 & X < xi_3]
-X4 = X[X >= xi_3]
+X2 = X[X >= xi_1]
 
-y1 = 2*X1
-y2 = 69 - 1.3*X2
-y3 = rep(-22, length(X3))
-y4 = X4 - 107
+y1 = rep(26.3, length(X1))
+y2 = .82*X2
 
-
-y_true = c(y1,y2,y3,y4)
-
-
-eps = rnorm(n,0,sigma)
+y_true = c(y1,y2)
+eps = rnorm(n,0,3)
 y = y_true + eps
 
 
 df0 = tibble(X,y,y_true)
-ggplot(df0) + geom_point(aes(X,y), color='gray') +
+ggplot(df0) + geom_point(aes(X,y), color='gray') + 
   geom_line(aes(X,y_true), color='red')
-
 
 ### Find structural changes via the proposed GA method
 
@@ -106,8 +95,8 @@ epsilon = .0001
 
 
 
-start_pos = 501
-end_pos = 1000
+start_pos = 701
+end_pos = 750
 for(i in start_pos:end_pos){
   begin = proc.time()  
   seed_i = 1000*(i-1)+543
@@ -145,7 +134,7 @@ for(i in start_pos:end_pos){
   seg_mod = dpseg(X,y,minl = 100)
   temp_dp = seg_mod$segments[-1,'x1']
   m_dp = length(temp_dp)
-  row_dp = c(1,2,m_dp,temp_dp,rep(0,10-m_dp))
+  row_dp = c(i,seed_i,m_dp,temp_dp,rep(0,10-m_dp))
   results_dp[nrow(results_dp)+1,] = row_dp
   
 }
